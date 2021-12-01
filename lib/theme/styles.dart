@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 // C0LOURS
 //------------------------------------------------------------------------------
-const Color accessPrimary = Color(0xFFe0115f);
-const Color accessPrimaryVariant = Color(0xFFb30e4c);
+const Color accessPrimary = Color(0xFF4c4c4c);
+const Color accessPrimaryVariant = Color(0xFF323232);
 
 const Color accessSecondary = Color(0xFF005f81);
 const Color accessSecondaryVariant = Color(0xFF003554);

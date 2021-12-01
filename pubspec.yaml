@@ -35,6 +35,7 @@ dependencies:
   flutter_file_manager: ^0.2.0
   firebase_auth: ^3.2.0
   firebase_core: ^1.10.0
+  flutter_otp_text_field: ^1.0.0
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -54,11 +55,16 @@ flutter:
     - assets/images/file.png
     - assets/images/logo.png
     - assets/images/A2EI.png
+    - assets/images/bg.jpg
+    - assets/images/bg reg.jpg
 
   fonts:
     - family: WorkSansMedium
       fonts:
         - asset: assets/fonts/WorkSans-Medium.ttf
+    - family: Itim
+      fonts:
+        - asset: assets/fonts/Itim-Regular.ttf
 
   # To add assets to your application, add an assets section, like this:
   # assets:

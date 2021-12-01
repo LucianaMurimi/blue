@@ -16,6 +16,7 @@ class SharedFiles extends StatefulWidget {
 class _SharedFilesState extends State<SharedFiles> {
   var files;
   bool pressed = false;
+  var itemPressed = [];
 
   void getFiles() async{
     List<StorageInfo> storageInfo = await PathProviderEx.getStorageInfo();
@@ -41,38 +42,60 @@ class _SharedFilesState extends State<SharedFiles> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          backgroundColor: Color(0xFFffffff),
-          iconTheme: IconThemeData(color: Color(0xFF005f81)),
+        backgroundColor: Color(0xFFffffff),
+        iconTheme: IconThemeData(color: Color(0xFF005f81)),
         elevation: 2.0,
         toolbarHeight: 68.0,
         titleSpacing: 0,
 
-        title: Text('RECEIVED FILES',
-            style: TextStyle(color: Color(0xFFe0115f), fontSize: 14.0, fontWeight: FontWeight.bold, letterSpacing: 2)),
+        automaticallyImplyLeading: pressed ? false : true,
+        title: pressed ?
+              Row(children: [
+                IconButton(onPressed: (){
+                  setState(() {
+                    pressed = !pressed;
+                  });
+                }, icon: Icon(Icons.arrow_back, size: 28)),
+                Text("${itemPressed.where((element) => element == true).length} selected item(s)", style: TextStyle(color: Color(0xFFe0115f), fontSize: 14.0, fontWeight: FontWeight.bold, letterSpacing: 2)),
+              ],)
+            :
+              Text('RECEIVED FILES',
+                  style: TextStyle(color: Color(0xFFe0115f), fontSize: 14.0, fontWeight: FontWeight.bold, letterSpacing: 2)),
         actions: pressed ?
-          [Icon(Icons.delete, size: 24), SizedBox(width: 20,), Icon(Icons.send, size: 24),SizedBox(width: 10,)] :
-          [Icon(Icons.search_rounded, size: 28), SizedBox(width: 10,), Icon(Icons.more_vert, size: 28), SizedBox(width: 10,)],
+          [Icon(Icons.delete, size: 24), SizedBox(width: 20,), Icon(Icons.send, size: 24),SizedBox(width: 20,)] :
+          [Icon(Icons.search_rounded, size: 28), SizedBox(width: 10,), Icon(Icons.more_vert, size: 28), SizedBox(width: 16,)],
       ),
 
         body:files == null? Text("Searching Files"):
-        ListView.builder(  //if file/folder list is grabbed, then show here
-          itemCount: files?.length ?? 0,
-          itemBuilder: (context, index) {
-            return GestureDetector(
-              child: ListTile(
-                title: Text(files[index].path.split('/').last),
-                leading: Icon(Icons.insert_drive_file, size: 20, color: Color(0xFFc0c0c0)),
-                trailing: pressed ? Icon(Icons.check_circle) : null,
-              ),
-            onLongPress: (){
-              pressed = true;
-              print("$pressed");
-              setState(() {
+        Container(
+          padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 10.0),
 
-              });
+          child: ListView.builder(  //if file/folder list is grabbed, then show here
+            itemCount: files?.length ?? 0,
+            itemBuilder: (context, index) {
+              itemPressed.add(false);
+              return GestureDetector(
+                child: ListTile(
+                  title: Text(files[index].path.split('/').last),
+                  leading: Icon(Icons.insert_drive_file, size: 20, color: Color(0xFFc0c0c0)),
+                  trailing: pressed ? Icon(Icons.check_circle, color: itemPressed[index] ? Color(0xFF005f81) : Color(0xFFc0c0c0),) : null,
+                ),
+                onLongPress: (){
+                  setState(() {
+                    pressed = true;
+                    itemPressed[index] = !itemPressed[index];
+                  });
+                },
+                onTap: (){
+                   if(pressed){
+                      setState(() {
+                        itemPressed[index] = !itemPressed[index];
+                      });
+                   }
+                },
+              );
             },
-            );
-          },
+          ),
         )
     );
   }

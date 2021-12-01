@@ -1,8 +1,7 @@
+import 'package:blue/screens/authenticate/otp.dart';
 import 'package:blue/screens/authenticate/register.dart';
 import 'package:blue/services/auth.dart';
 import 'package:flutter/material.dart';
-
-import '../home.dart';
 
 class SignIn extends StatefulWidget {
   const SignIn({Key? key}) : super(key: key);
@@ -19,20 +18,31 @@ class _SignInState extends State<SignIn> {
   String username = '';
   String password = '';
 
+
   @override
   Widget build(BuildContext context) {
    return Scaffold(
      body: Center(
        child: SingleChildScrollView(
          child: Container(
+           constraints: BoxConstraints(minHeight: MediaQuery. of(context). size. height),
+           decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage("assets/images/bg.jpg"),
+                fit: BoxFit.cover,
+              ),
+           ),
            padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),
+
 
            child: Form(
              child: Column(
+               mainAxisAlignment: MainAxisAlignment.center,
                children: [
                  // 1. logo
                  //------------------------------------------------------------
-                 new Image.asset("assets/images/logo.png", width: 160, height: 120),
+                 new Image.asset("assets/images/logo.png", width: 180, height: 80),
+
                  SizedBox(height: 28.0),
 
                  // 2. username TextFormField
@@ -104,21 +114,22 @@ class _SignInState extends State<SignIn> {
 
                      child: TextButton(
                        onPressed: () async {
-                         print(username);
-                         print(password);
-
+                         // print(username);
+                         // print(password);
                          try{
                            dynamic result = await _auth.signInWithEmailAndPassword(username, password);
 
                            if(result != null){
+
                              setState(() {
                                Navigator.push(
                                  context,
-                                 MaterialPageRoute(builder: (context) => HomePage()),
+                                 MaterialPageRoute(builder: (context) => OTP()),
                                );
                              });
 
                            } else {
+                             // TODO: Handle errors
                              setState(() {
                                ScaffoldMessenger.of(context).showSnackBar(
                                    SnackBar(content: Text('Could not sign in with the given credentials!',
