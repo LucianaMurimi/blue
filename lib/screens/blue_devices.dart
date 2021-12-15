@@ -14,13 +14,14 @@ class BluetoothApp extends StatefulWidget {
 class _BluetoothAppState extends State<BluetoothApp> {
   //1. Initializing the Bluetooth connection state to be unknown
   BluetoothState _bluetoothState = BluetoothState.UNKNOWN;
+
   // Initializing a global key, as it would help us in showing a SnackBar later
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
-  //2. Get the instance of the Bluetooth
+  // Get the instance of the Bluetooth
   FlutterBluetoothSerial _bluetooth = FlutterBluetoothSerial.instance;
-  // Track the Bluetooth connection with the remote device
 
+  // Track the Bluetooth connection with the remote device
   late BluetoothConnection connection;
 
   late int _deviceState;
@@ -223,20 +224,30 @@ class _BluetoothAppState extends State<BluetoothApp> {
               ],
             ),
             Expanded(
-              child: _getDeviceItems().length > 0
-                  ? ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: _getDeviceItems().length,
-                      itemBuilder: (BuildContext context, int index) {
-                        return ListTile(
-                          title: Text('${pairedDevicesList[index]}',
-                            style: TextStyle(
-                                fontSize: 12.8, fontWeight: FontWeight.bold, color: Color(0xBF000000)
-                            ),),
-                          trailing: Icon(Icons.settings, size: 20, color: Color(0xFF005f81)),
-                        );
-                      },
-                    )
+              child: _getDeviceItems().length > 0 ?
+              Padding(
+                padding: const EdgeInsets.only(right: 12.0),
+                child: RawScrollbar(
+                      isAlwaysShown: true,
+                      thumbColor: Color(0xBF005f81),
+                      radius: Radius.circular(2),
+                      thickness: 4.8,
+
+                      child: ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: _getDeviceItems().length,
+                          itemBuilder: (BuildContext context, int index) {
+                            return ListTile(
+                              title: Text('${pairedDevicesList[index]}',
+                                style: TextStyle(
+                                    fontSize: 12.8, fontWeight: FontWeight.bold, color: Color(0xBF000000)
+                                ),),
+                              // trailing: Icon(Icons.settings, size: 20, color: Color(0xFF005f81)),
+                            );
+                          },
+                        ),
+                    ),
+                  )
                   : Center(child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -295,7 +306,7 @@ class _BluetoothAppState extends State<BluetoothApp> {
                       child: Text('SETTINGS',
                           style: TextStyle(color: Color(0xFF005f81), fontSize: 12.0, fontWeight: FontWeight.bold, letterSpacing: 2,)),
                       onPressed: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => BluetoothApp()));
+                        FlutterBluetoothSerial.instance.openSettings();
                       },
                     )
                 ),

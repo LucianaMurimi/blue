@@ -9,15 +9,6 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
-  // @override
-  // Widget build(BuildContext context) {
-  //   return MaterialApp(
-  //     title: 'A2EI',
-  //     debugShowCheckedModeBanner: false,
-  //     theme: accessTheme(),
-  //     home: SignIn(),
-  //   );
-  // }
 
   final Future<FirebaseApp> _initialization = Firebase.initializeApp();
 
@@ -49,8 +40,8 @@ class MyApp extends StatelessWidget {
         //----------------------------------------------------------------------
         return MaterialApp(
           debugShowCheckedModeBanner: false,
-          theme: accessTheme(),
-          home: Scaffold(body: Center(child: Text("loading"))),
+          home: Scaffold(body: Center(child: Text('A2EI',
+              style: TextStyle(color: Color(0xFFe0115f), fontSize: 20.0, fontWeight: FontWeight.bold, letterSpacing: 2)),)),
         );
       },
     );

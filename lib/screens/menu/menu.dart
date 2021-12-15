@@ -1,9 +1,12 @@
+import 'package:blue/screens/authenticate/sign_in.dart';
+import 'package:blue/services/auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 
 class Menu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final AuthService _auth = AuthService();
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -45,18 +48,24 @@ class Menu extends StatelessWidget {
                   context: context,
                   builder: (BuildContext context) {
                     return AlertDialog(
-                      title: Text('Log Out?',  style: TextStyle(color: Color(0xFF005f81), fontSize: 20.0,)),
+                      title: Text('LOG OUT?',  style: TextStyle(color: Color(0xFFe0115f), fontSize: 14.0, letterSpacing: 2.4)),
                       content: Text('Are you sure you want to log out?'),
                       actions: [
-                        TextButton(onPressed: () {
-
+                        TextButton(onPressed: () async {
+                          await _auth.signOut()
+                              .then((value) => {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => SignIn()),
+                            )
+                          });
                         },
-                          child: Text('Yes', style: TextStyle(color: Color(0xFF000000), fontWeight: FontWeight.bold),),
+                          child: Text('Yes', style: TextStyle(color: Color(0xFF005f81), fontWeight: FontWeight.bold),),
                         ),
                         TextButton(onPressed: (){
                           Navigator.pop(context, false);
                         },
-                          child: Text('No', style: TextStyle(color: Color(0xFF005f81), fontWeight: FontWeight.bold),),
+                          child: Text('No', style: TextStyle(color: Color(0xFF000000), fontWeight: FontWeight.bold),),
                         )
                       ],
                     );

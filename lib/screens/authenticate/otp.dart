@@ -1,15 +1,21 @@
 import 'package:blue/screens/blue_devices.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 
 class OTP extends StatefulWidget {
-  const OTP({Key? key}) : super(key: key);
+  final FirebaseAuth phoneAuth;
+  final String verificationId;
+
+  const OTP(this.phoneAuth, this.verificationId);
 
   @override
   _OTPState createState() => _OTPState();
 }
 
 class _OTPState extends State<OTP> {
+  late String smsCode;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -48,8 +54,8 @@ class _OTPState extends State<OTP> {
 
                 //--------------------------------------------------------------
                 OtpTextField(
-                  numberOfFields: 4,
-                  fieldWidth: 56,
+                  numberOfFields: 6,
+                  // fieldWidth: 48,
                   showFieldAsBox: true,
                   filled: true,
                   fillColor: Color(0xFFf2f2f2),
@@ -64,7 +70,9 @@ class _OTPState extends State<OTP> {
 
                   onSubmit: (String verificationCode){
                     //runs when every textfield is filled
-                    print("$verificationCode");
+                    smsCode = verificationCode;
+                    print("============================================");
+                    print("SMS CODE: $smsCode");
                   },
                 ),
 
@@ -81,13 +89,30 @@ class _OTPState extends State<OTP> {
                     ),
 
                     child: TextButton(
-                      onPressed: () {
-                        setState(() {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => BluetoothApp()),
-                          );
-                        });
+                      onPressed: () async {
+
+
+                        // print("================================================================");
+                        // print("SMSCODE: ${smsCode}");
+                        // Create a PhoneAuthCredential with the code
+                        PhoneAuthCredential credential = PhoneAuthProvider.credential(verificationId: widget.verificationId, smsCode: smsCode);
+
+                        // Sign the user in (or link) with the credential
+                        try {
+                          await widget.phoneAuth.signInWithCredential(credential);
+                          setState(() {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => BluetoothApp()),
+                            );
+                          });
+
+                        } catch(err) {
+                          print(err);
+                        }
+
+
+
                       },
                       child: Text('VERIFY & PROCEED',
                           style: TextStyle(color: Color(0xFFffffff), fontSize: 16.0, fontWeight: FontWeight.bold, letterSpacing: 2, wordSpacing: 3.6)),
@@ -112,6 +137,7 @@ class _OTPState extends State<OTP> {
                       )
                     ]
                 ),
+
               ],
             ),
 
