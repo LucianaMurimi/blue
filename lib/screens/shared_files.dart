@@ -1,5 +1,6 @@
 // import 'dart:html';
 
+import 'package:blue/screens/blue_devices.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
@@ -7,7 +8,6 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_file_manager/flutter_file_manager.dart';
 import 'package:path_provider_ex/path_provider_ex.dart';
 import 'package:open_file/open_file.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -15,9 +15,6 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:blue/globals.dart';
 import 'package:blue/screens/menu/menu.dart';
 import 'package:permission_handler/permission_handler.dart';
-
-import 'package:loading_overlay/loading_overlay.dart';
-
 
 class SharedFiles extends StatefulWidget {
   const SharedFiles({Key? key}) : super(key: key);
@@ -41,6 +38,8 @@ class _SharedFilesState extends State<SharedFiles> {
   var selectedItemsPath = [];
 
   late bool permissionGranted;
+
+  var clientID = "83763465526-4iqdonhnj6ljvv3os1pe8oue86gu8rc2.apps.googleusercontent.com";
 
   //----------------------------------------------------------------------------
 
@@ -69,6 +68,7 @@ class _SharedFilesState extends State<SharedFiles> {
               })
         );
       });
+
     } on FirebaseException catch (err) {
 
       print("$err");
@@ -118,32 +118,33 @@ class _SharedFilesState extends State<SharedFiles> {
   }
 
   uploadSuccess(){
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          Future.delayed(Duration(seconds: 1)).then((_) {
-            pressed = false;
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => SharedFiles()),
+    setState(() {
+      pressed = false;
+      bool manuallyClosed = false;
+
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            Future.delayed(Duration(seconds: 1)).then((_) {
+              if (!manuallyClosed) {
+                Navigator.pop(context);
+              }
+            });
+
+
+            return AlertDialog(
+              title: Icon(Icons.check_circle_rounded, size: 48, color: Colors.green,),
+              content:  Text('Successfully Uploaded', textAlign: TextAlign.center,),
             );
-            // Navigator.pop(context, false);
-          });
-
-
-          return AlertDialog(
-            title: Icon(Icons.check_circle_rounded, size: 48, color: Colors.green,),
-            content:  Text('Successfully Uploaded', textAlign: TextAlign.center,),
-          );
-        }
-    );
+          }
+      );
+    });
   }
 
   sendFiles() {
 
     if(connectivityRes == "ConnectivityResult.none"){
       setState(() {
-        Navigator.pop(context, false);
         showDialog(
             context: context,
             builder: (BuildContext context) {
@@ -215,7 +216,7 @@ class _SharedFilesState extends State<SharedFiles> {
     files = await fm.filesTree(
         //set fm.dirsTree() for directory/folder tree list
         excludedPaths: ["/storage/emulated/0/Bluetooth"],
-        extensions: ["txt"]
+        extensions: ["txt", "csv"]
     );
     setState(() {});
   }
@@ -252,7 +253,7 @@ class _SharedFilesState extends State<SharedFiles> {
         toolbarHeight: 68.0,
         titleSpacing: 0,
 
-        automaticallyImplyLeading: pressed ? false : true,
+        automaticallyImplyLeading: false,
         title: pressed ?
               Row(children: [
                 IconButton(onPressed: (){
@@ -263,8 +264,16 @@ class _SharedFilesState extends State<SharedFiles> {
                 Text("${itemPressed.where((element) => element == true).length} selected item(s)", style: TextStyle(color: Color(0xFFe0115f), fontSize: 14.0, fontWeight: FontWeight.bold, letterSpacing: 2)),
               ],)
             :
-              Text('RECEIVED FILES',
-                  style: TextStyle(color: Color(0xFFe0115f), fontSize: 14.0, fontWeight: FontWeight.bold, letterSpacing: 2)),
+              Row(children: [
+                IconButton(onPressed: (){
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => BluetoothApp()),
+                  );
+                }, icon: Icon(Icons.arrow_back, size: 28)),
+                Text('RECEIVED FILES',
+                    style: TextStyle(color: Color(0xFFe0115f), fontSize: 14.0, fontWeight: FontWeight.bold, letterSpacing: 2))
+              ]),
         actions: pressed ?
           [Icon(Icons.delete, size: 24), SizedBox(width: 12,),
           IconButton(onPressed: (){

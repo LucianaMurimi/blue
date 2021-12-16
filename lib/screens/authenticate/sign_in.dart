@@ -9,7 +9,7 @@ import 'package:loading_overlay/loading_overlay.dart';
 import 'package:blue/globals.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:password/password.dart';
+import 'package:crypt/crypt.dart';
 
 
 class SignIn extends StatefulWidget {
@@ -176,7 +176,7 @@ class _SignInState extends State<SignIn> {
                                String? storedUsername = await storage.read(key: 'username');
                                String? hashedPassword = await storage.read(key: 'hashedPassword');
 
-                               if((username.trim() == storedUsername) && (Password.verify(password, hashedPassword))){
+                               if((username.trim() == storedUsername) && (Crypt(hashedPassword!).match(password))){
                                  user = username.trim();
                                  setState(() {
                                    _loading = false;

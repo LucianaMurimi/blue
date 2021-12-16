@@ -3,9 +3,8 @@ import 'package:blue/services/auth.dart';
 import 'sign_in.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:password/password.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:crypt/crypt.dart';
 
 class Register extends StatefulWidget {
   const Register({Key? key}) : super(key: key);
@@ -34,10 +33,10 @@ class _RegisterState extends State<Register> {
 
   //----------------------------------------------------------------------------
   storeLocally(username, password) async {
-    var hashedPassword = Password.hash(password, new PBKDF2());
+    var hashedPassword = Crypt.sha256(password);
 
     await secureStorage.write(key: 'username', value: username);
-    await secureStorage.write(key: 'hashedPassword', value: hashedPassword);
+    await secureStorage.write(key: 'hashedPassword', value: hashedPassword.toString());
   }
 
   @override
